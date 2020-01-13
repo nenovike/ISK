@@ -6,14 +6,15 @@ import javafx.util.Pair;
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
 
-    private static final int population = 100;
+    private static final int population = 200;
     private static final double crossoverChance = 0.75;
     private static final double randomSelectionChance = 0.1;
-    private static final double chromosomeMutationChance = 0.15;
-    private static final int maxGenerations = 1000;
+    private static final double chromosomeMutationChance = 0.1;
+    private static final int maxGenerations = 2000;
 
     private String possibleGenes;
     private long[] cutLengths;
@@ -94,6 +95,7 @@ public class Main {
             Long cutouts = cutsAndCutouts.getValue();
             cuts.forEach(x -> writer.println(x + " -> " + x.stream().reduce(Long::sum).orElse(0L)));
             writer.println(cuts.size() + "; " + cutouts);
+            writer.println("100% -> " + cuts.stream().map(x->x.stream().reduce(Long::sum).orElse(0L)).filter(x->x==logLength).count());
         } catch (FileNotFoundException e) {
             System.out.println("Nie znaleziono pliku wyjsciowego!");
         }

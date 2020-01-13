@@ -26,21 +26,27 @@ public class GACut extends GASequenceList {
 
     protected double getFitness(int iChromeIndex) {
         char[] genes = this.getChromosome(iChromeIndex).getGenes();
-        long cutouts  = 0;
+        double bonus = 0.0;
+        double cutouts  = 0.0;
         long currentLogLength = logLength;
         long usedLogs = 1;
         for (int gene : genes) {
             long cut = cutLengths[this.possGeneValues.indexOf(gene)];
             if (currentLogLength < cut) {
-                cutouts += currentLogLength;
+                if (currentLogLength == 0)
+                    bonus += 20.0;
+                cutouts += Math.log(1 + currentLogLength);
                 usedLogs++;
                 currentLogLength = logLength;
             }
             currentLogLength -= cut;
         }
         if (currentLogLength == logLength) usedLogs--;
+        bonus += cutouts==0.0?Double.POSITIVE_INFINITY:0.0;
+        cutouts += currentLogLength;
         return (100.0 - 100.0 * usedLogs / cutLengths.length)
-                / Math.log((double) cutouts / logLength);
+                - (cutouts / Math.log(1 + logLength) / cutLengths.length)
+                + bonus;
     }
 
     public String getFittestChromosomeString() {
